@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PeopleJosePerez.Models
+namespace PeopleJosePerez
 {
     public class FileAccessHelper
     {
         public static string GetLocalFilePath(string filename)
         {
-            return System.IO.Path.Combine(FileSystem.AppDataDirectory, filename);
+            return Path.Combine(FileSystem.AppDataDirectory, filename);
         }
     }
 }

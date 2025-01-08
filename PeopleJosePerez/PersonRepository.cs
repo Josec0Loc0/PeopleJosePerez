@@ -1,22 +1,24 @@
-﻿using Microsoft.WindowsAppSDK.Runtime;
-using PeopleJosePerez.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PeopleJosePerez.Models;
+using SQLite;
 
 namespace PeopleJosePerez
 {
     public class PersonRepository
     {
         string _dbPath;
+
+        private SQLiteConnection conn;
         public string StatusMessage { get; set; }
         // TODO: Add variable for the SQLite connection
         private void Init()
         {
-            // TODO: Add code to initialize the repository         
+            if (conn != null)
+                return;
+
+            conn = new SQLiteConnection(_dbPath);
+            conn.CreateTable<PersonJP>();
         }
+
         public PersonRepository(string dbPath)
         {
             _dbPath = dbPath;
@@ -26,12 +28,12 @@ namespace PeopleJosePerez
             int result = 0;
             try
             {
-                // TODO: Call Init()
+                Init();
                 // basic validation to ensure a name was entered
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Valid name required");
-                // TODO: Insert the new person into the database
-                result = 0;
+                result = conn.Insert(new PersonJP { Name = name });
+
                 StatusMessage = string.Format("{0} record(s) added (Name: {1})", result, name);
             }
             catch (Exception ex)
@@ -41,9 +43,10 @@ namespace PeopleJosePerez
         }
         public List<PersonJP> GetAllPeople()
         {
-            // TODO: Init then retrieve a list of Person objects from the database into a list
             try
             {
+                Init();
+                return conn.Table<PersonJP>().ToList();
             }
             catch (Exception ex)
             {
